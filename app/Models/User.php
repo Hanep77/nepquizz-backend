@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -18,6 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'email',
         'password',
@@ -33,6 +35,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    protected $keyType = "string";
+
+    public $incrementing = false;
+
     /**
      * Get the attributes that should be cast.
      *
@@ -44,5 +50,12 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public static function booted()
+    {
+        static::creating(function ($model) {
+            $model->id = Str::uuid();
+        });
     }
 }
