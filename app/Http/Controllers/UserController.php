@@ -31,7 +31,7 @@ class UserController extends Controller
         $user = Auth::user();
         $token = $user->createToken('main');
         return response()->json([
-            "data" => new UserResource($user),
+            "user" => new UserResource($user),
             "token" => $token->plainTextToken
         ]);
     }
@@ -41,7 +41,7 @@ class UserController extends Controller
         $validate = $request->validate([
             "name" => ["required", "max:100"],
             "email" => ["required", "unique:users,email"],
-            "password" => ["required"],
+            "password" => ["required", "min:6", "confirmed"],
         ]);
 
         $validate["id"] = Str::uuid();
@@ -50,7 +50,7 @@ class UserController extends Controller
         $token = $user->createToken("main");
 
         return response()->json([
-            "data" => new UserResource($user),
+            "user" => new UserResource($user),
             "token" => $token->plainTextToken
         ], 201);
     }
@@ -61,5 +61,10 @@ class UserController extends Controller
         return response()->json([
             "message" => "success logout"
         ], 200);
+    }
+
+    public function me(Request $request): UserResource
+    {
+        return new UserResource($request->user());
     }
 }
