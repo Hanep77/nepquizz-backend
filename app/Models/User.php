@@ -4,10 +4,11 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Str;
+use Symfony\Component\Uid\UuidV7;
 
 class User extends Authenticatable
 {
@@ -55,7 +56,17 @@ class User extends Authenticatable
     public static function booted()
     {
         static::creating(function ($model) {
-            $model->id = Str::uuid();
+            $model->id = UuidV7::generate();
         });
+    }
+
+    public function quizzes(): HasMany
+    {
+        return $this->hasMany(Quiz::class, 'user_id');
+    }
+
+    public function gameSessions(): HasMany
+    {
+        return $this->hasMany(GameSession::class, 'user_id');
     }
 }
