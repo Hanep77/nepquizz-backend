@@ -12,6 +12,9 @@ class GameSession extends Model
 {
     use HasFactory;
 
+    protected $keyType = "string";
+    public $incrementing = false;
+
     public static function booted()
     {
         static::creating(function ($model) {
