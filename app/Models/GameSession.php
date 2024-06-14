@@ -6,10 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Symfony\Component\Uid\UuidV7;
 
 class GameSession extends Model
 {
     use HasFactory;
+
+    public static function booted()
+    {
+        static::creating(function ($model) {
+            $model->id = UuidV7::generate();
+        });
+    }
 
     public function user(): BelongsTo
     {
