@@ -15,7 +15,7 @@ class DifficulitySeeder extends Seeder
     {
         Difficulity::factory()->create([
             "title" => "Easy",
-            "slug" => "Easy"
+            "slug" => "easy"
         ]);
 
         Difficulity::factory()->create([
