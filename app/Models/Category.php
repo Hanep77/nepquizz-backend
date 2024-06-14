@@ -10,6 +10,8 @@ class Category extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     public function quizzes(): HasMany
     {
         return $this->hasMany(Quiz::class, 'category_id');

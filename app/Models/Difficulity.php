@@ -10,6 +10,8 @@ class Difficulity extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     public function quizzes(): HasMany
     {
         return $this->hasMany(Quiz::class, 'difficulity_id');
