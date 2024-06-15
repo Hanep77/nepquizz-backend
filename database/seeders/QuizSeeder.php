@@ -21,7 +21,7 @@ class QuizSeeder extends Seeder
             "user_id" => $user1,
             "category_id" => 1,
             "difficulity_id" => 1,
-            "title" => "javascript for basic",
+            "title" => "javascript basic",
             "description" => "test your javascript basic knowledge"
         ]);
 
@@ -38,6 +38,22 @@ class QuizSeeder extends Seeder
             "category_id" => 2,
             "difficulity_id" => 3,
             "title" => "guess 1940s footballer",
+            "description" => "test your football knowledge"
+        ]);
+
+        Quiz::factory()->create([
+            "user_id" => $user1,
+            "category_id" => 2,
+            "difficulity_id" => 3,
+            "title" => "guess ucl winners",
+            "description" => "test your football knowledge"
+        ]);
+
+        Quiz::factory()->create([
+            "user_id" => $user2,
+            "category_id" => 2,
+            "difficulity_id" => 3,
+            "title" => "guess world cup top scorers",
             "description" => "test your football knowledge"
         ]);
     }
