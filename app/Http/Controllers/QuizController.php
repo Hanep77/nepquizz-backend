@@ -10,10 +10,25 @@ use Illuminate\Http\Request;
 
 class QuizController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $quizzes = Quiz::query()->with(["user", "category", "difficulity"])->get();
-        return QuizResource::collection($quizzes);
+        $categoryParam = $request->input('category');
+        $difficulityParam = $request->input('difficulity');
+        $quizzes = Quiz::query()->with(["user", "category", "difficulity"]);
+
+        if ($categoryParam) {
+            $quizzes->whereHas('category', function ($query) use ($categoryParam) {
+                $query->where('slug', $categoryParam);
+            });
+        }
+
+        if ($difficulityParam) {
+            $quizzes->whereHas('difficulity', function ($query) use ($difficulityParam) {
+                $query->where('slug', $difficulityParam);
+            });
+        }
+
+        return QuizResource::collection($quizzes->get());
     }
 
     public function show(string $id): QuizResource
