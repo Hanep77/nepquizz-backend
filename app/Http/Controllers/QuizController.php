@@ -12,13 +12,15 @@ class QuizController extends Controller
 {
     public function index()
     {
-        $quizzes = Quiz::query()->with(["user", "category", "difficulity", "questions"])->get();
+        $quizzes = Quiz::query()->with(["user", "category", "difficulity"])->get();
         return QuizResource::collection($quizzes);
     }
 
     public function show(string $id): QuizResource
     {
-        $quiz = Quiz::query()->with(["user", "category", "difficulity", "questions"])->find($id);
+        $quiz = Quiz::query()->with(["user", "category", "difficulity", "questions" => function ($query) {
+            $query->with(["answers"]);
+        }])->find($id);
         if (!$quiz) {
             throw new HttpResponseException(response([
                 "message" => "NOT FOUND"

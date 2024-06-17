@@ -21,7 +21,7 @@ class QuizResource extends JsonResource
             "author" => new UserResource($this->user),
             "category" => $this->category,
             "difficulity" => $this->difficulity,
-            "questions" => QuestionResource::collection($this->questions)
+            "questions" => QuestionResource::collection($this->whenLoaded('questions'))
         ];
     }
 }
