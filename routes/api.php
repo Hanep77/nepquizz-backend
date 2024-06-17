@@ -7,3 +7,5 @@ require_once __DIR__ . '/v1/users.php';
 require_once __DIR__ . '/v1/difficulities.php';
 require_once __DIR__ . '/v1/categories.php';
 require_once __DIR__ . '/v1/quizzes.php';
+require_once __DIR__ . '/v1/gameSessions.php';
+require_once __DIR__ . '/v1/userAnswers.php';

@@ -17,7 +17,7 @@ class QuestionResource extends JsonResource
         return [
             "id" => $this->id,
             "content" => $this->content,
-            "answer" => AnswerResource::collection($this->whenLoaded('answers'))
+            "answers" => AnswerResource::collection($this->whenLoaded('answers'))
         ];
     }
 }
