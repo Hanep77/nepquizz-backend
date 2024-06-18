@@ -14,6 +14,7 @@ class QuizController extends Controller
     {
         $categoryParam = $request->input('category');
         $difficulityParam = $request->input('difficulity');
+        $search = $request->input('search');
         $quizzes = Quiz::query()->with(["user", "category", "difficulity"]);
 
         if ($categoryParam) {
@@ -26,6 +27,10 @@ class QuizController extends Controller
             $quizzes->whereHas('difficulity', function ($query) use ($difficulityParam) {
                 $query->where('slug', $difficulityParam);
             });
+        }
+
+        if ($search) {
+            $quizzes->where('title', 'LIKE', "%$search%");
         }
 
         return QuizResource::collection($quizzes->get());
