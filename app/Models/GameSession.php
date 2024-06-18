@@ -13,6 +13,7 @@ class GameSession extends Model
     use HasFactory;
 
     protected $keyType = "string";
+    protected $guarded = ["id"];
     public $incrementing = false;
 
     public static function booted()
@@ -32,8 +33,8 @@ class GameSession extends Model
         return $this->belongsTo(Quiz::class, 'quiz_id');
     }
 
-    public function answers(): HasMany
+    public function userAnswers(): HasMany
     {
-        return $this->hasMany(Answer::class, 'game_session_id');
+        return $this->hasMany(UserAnswer::class, 'game_session_id');
     }
 }
