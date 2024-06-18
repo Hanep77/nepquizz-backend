@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GameSessionResouce;
 use App\Http\Resources\QuizResource;
 use App\Models\GameSession;
 use App\Models\Quiz;
@@ -29,13 +30,13 @@ class GameSessionController extends Controller
         return response()->json($gameSession);
     }
 
-    public function get_session(Request $request, $id)
+    public function end_session(Request $request)
     {
-        $gameSession = GameSession::query()->with("quiz", function ($query) {
-            $query->with('questions', function ($query) {
-                $query->with('answers');
-            });
-        })->find($id);
+        $validated = $request->validate([
+            "game_session_id" => ["required", "exists:game_sessions,id"]
+        ]);
+
+        $gameSession = GameSession::find($validated["game_session_id"]);
 
         if (!$gameSession) {
             throw new HttpResponseException(response([
@@ -49,7 +50,41 @@ class GameSessionController extends Controller
             ], 403));
         }
 
-        return new QuizResource($gameSession->quiz);
+        $finished_at = now();
+
+        $gameSession->update([
+            "finished_at" => $finished_at
+        ]);
+
+        return response()->json($gameSession);
+    }
+
+    public function get_session(Request $request, $id)
+    {
+        $gameSession = GameSession::query()->with([
+            "quiz" => function ($query) {
+                $query->with('questions', function ($query) {
+                    $query->with('answers');
+                });
+            },
+            "userAnswers" => function ($query) {
+                $query->with('answer');
+            }
+        ])->find($id);
+
+        if (!$gameSession) {
+            throw new HttpResponseException(response([
+                "message" => "NOT FOUND"
+            ], 404));
+        }
+
+        if ($gameSession->user_id != $request->user()->id) {
+            throw new HttpResponseException(response([
+                "message" => "FORBIDDEN"
+            ], 403));
+        }
+
+        return new GameSessionResouce($gameSession);
     }
 
     public function get_user_answers($id)
