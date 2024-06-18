@@ -29,7 +29,7 @@ class GameSessionController extends Controller
         return response()->json($gameSession);
     }
 
-    public function get_session($id)
+    public function get_session(Request $request, $id)
     {
         $gameSession = GameSession::query()->with("quiz", function ($query) {
             $query->with('questions', function ($query) {
@@ -41,6 +41,12 @@ class GameSessionController extends Controller
             throw new HttpResponseException(response([
                 "message" => "NOT FOUND"
             ], 404));
+        }
+
+        if ($gameSession->user_id != $request->user()->id) {
+            throw new HttpResponseException(response([
+                "message" => "FORBIDDEN"
+            ], 403));
         }
 
         return new QuizResource($gameSession->quiz);
