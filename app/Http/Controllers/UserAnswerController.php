@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserAnswerResouce;
 use App\Models\Answer;
 use App\Models\UserAnswer;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class UserAnswerController extends Controller
 {
-    public function store(Request $request): JsonResponse
+    public function store(Request $request): UserAnswerResouce
     {
         $validated = $request->validate([
             "game_session_id" => ["required", "exists:game_sessions,id"],
@@ -30,6 +30,6 @@ class UserAnswerController extends Controller
             $userAnswer = UserAnswer::query()->create($validated);
         }
 
-        return response()->json($userAnswer);
+        return new UserAnswerResouce($userAnswer->load("answer"));
     }
 }

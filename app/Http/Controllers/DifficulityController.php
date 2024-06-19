@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Difficulity;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class DifficulityController extends Controller
 {
-    public function index()
+    public function index(): JsonResponse
     {
-        return Difficulity::query()->get();
+        return response()->json(Difficulity::query()->get());
     }
 }

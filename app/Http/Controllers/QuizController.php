@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Resources\QuizResource;
 use App\Models\Quiz;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class QuizController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): ResourceCollection
     {
         $categoryParam = $request->input('category');
         $difficulityParam = $request->input('difficulity');
@@ -38,11 +38,14 @@ class QuizController extends Controller
 
     public function show(Request $request, string $id): QuizResource
     {
-        $quiz = Quiz::query()->with(["user", "category", "difficulity", "gameSession" => function ($query) use ($request) {
-            $query->where("user_id", $request->user()->id);
-        }, "questions" => function ($query) {
-            $query->with(["answers"]);
-        }])->find($id);
+        $quiz = Quiz::query()->with([
+            "user", "category", "difficulity",
+            "gameSession" => function ($query) use ($request) {
+                $query->where("user_id", $request->user()->id);
+            }, "questions" => function ($query) {
+                $query->with(["answers"]);
+            }
+        ])->find($id);
         if (!$quiz) {
             throw new HttpResponseException(response([
                 "message" => "NOT FOUND"

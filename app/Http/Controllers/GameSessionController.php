@@ -3,15 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\GameSessionResouce;
-use App\Http\Resources\QuizResource;
+use App\Http\Resources\UserAnswerResouce;
 use App\Models\GameSession;
-use App\Models\Quiz;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class GameSessionController extends Controller
 {
-    public function start_session(Request $request)
+    public function start_session(Request $request): GameSessionResouce
     {
         $validated = $request->validate([
             "user_id" => ["required", "exists:users,id"],
@@ -19,18 +19,19 @@ class GameSessionController extends Controller
         ]);
 
         $oldGameSession = GameSession::query()->where($validated)->first();
+
         if ($oldGameSession) {
-            return response()->json($oldGameSession);
+            return new GameSessionResouce($oldGameSession);
         }
 
         $validated["start_at"] = now();
 
         $gameSession = GameSession::query()->create($validated);
 
-        return response()->json($gameSession);
+        return new GameSessionResouce($gameSession);
     }
 
-    public function end_session(Request $request)
+    public function end_session(Request $request): GameSessionResouce
     {
         $validated = $request->validate([
             "game_session_id" => ["required", "exists:game_sessions,id"]
@@ -56,10 +57,10 @@ class GameSessionController extends Controller
             "finished_at" => $finished_at
         ]);
 
-        return response()->json($gameSession);
+        return new GameSessionResouce($gameSession);
     }
 
-    public function get_session(Request $request, $id)
+    public function get_session(Request $request, $id): GameSessionResouce
     {
         $gameSession = GameSession::query()->with([
             "quiz" => function ($query) {
@@ -87,9 +88,11 @@ class GameSessionController extends Controller
         return new GameSessionResouce($gameSession);
     }
 
-    public function get_user_answers($id)
+    public function get_user_answers($id): ResourceCollection
     {
-        $gameSession = GameSession::query()->find($id);
+        $gameSession = GameSession::query()->with("userAnswers", function ($query) {
+            $query->with("answer");
+        })->find($id);
 
         if (!$gameSession) {
             throw new HttpResponseException(response([
@@ -97,6 +100,6 @@ class GameSessionController extends Controller
             ], 404));
         }
 
-        return response()->json($gameSession->userAnswers);
+        return UserAnswerResouce::collection($gameSession->userAnswers);
     }
 }
