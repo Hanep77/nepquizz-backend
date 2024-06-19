@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Symfony\Component\Uid\UuidV7;
 
 class Quiz extends Model
@@ -42,8 +43,8 @@ class Quiz extends Model
         return $this->hasMany(Question::class, 'quiz_id');
     }
 
-    public function gameSession(): HasMany
+    public function gameSession(): HasOne
     {
-        return $this->hasMany(Question::class, 'quiz_id');
+        return $this->hasOne(GameSession::class, 'quiz_id');
     }
 }

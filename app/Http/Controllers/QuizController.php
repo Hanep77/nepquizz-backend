@@ -36,9 +36,11 @@ class QuizController extends Controller
         return QuizResource::collection($quizzes->get());
     }
 
-    public function show(string $id): QuizResource
+    public function show(Request $request, string $id): QuizResource
     {
-        $quiz = Quiz::query()->with(["user", "category", "difficulity", "questions" => function ($query) {
+        $quiz = Quiz::query()->with(["user", "category", "difficulity", "gameSession" => function ($query) use ($request) {
+            $query->where("user_id", $request->user()->id);
+        }, "questions" => function ($query) {
             $query->with(["answers"]);
         }])->find($id);
         if (!$quiz) {
