@@ -15,6 +15,7 @@ class Quiz extends Model
 
     protected $keyType = "string";
     public $incrementing = false;
+    public $guarded = ["id"];
 
     public static function booted()
     {

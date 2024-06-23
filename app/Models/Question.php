@@ -11,6 +11,8 @@ class Question extends Model
 {
     use HasFactory;
 
+    protected $guarded = ["id"];
+
     public function quiz(): BelongsTo
     {
         return $this->belongsTo(quiz::class, 'quiz_id');

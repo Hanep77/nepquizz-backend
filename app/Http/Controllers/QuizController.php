@@ -53,4 +53,20 @@ class QuizController extends Controller
         }
         return new QuizResource($quiz);
     }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            "title" => ["required", "max:255"],
+            "description" => ["required"],
+            "category_id" => ["required", "exists:categories,id"],
+            "difficulity_id" => ["required", "exists:difficulities,id"]
+        ]);
+
+        $validated["user_id"] = $request->user()->id;
+
+        $quiz = Quiz::query()->create($validated);
+
+        return new QuizResource($quiz);
+    }
 }
