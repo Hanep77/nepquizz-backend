@@ -11,7 +11,6 @@ class Category extends Model
     use HasFactory;
 
     public $timestamps = false;
-    protected $hidden = ["id"];
 
     public function quizzes(): HasMany
     {
