@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\QuizResource;
 use App\Models\Quiz;
+use Exception;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\DB;
 
 class QuizController extends Controller
 {
@@ -60,13 +62,35 @@ class QuizController extends Controller
             "title" => ["required", "max:255"],
             "description" => ["required"],
             "category_id" => ["required", "exists:categories,id"],
-            "difficulity_id" => ["required", "exists:difficulities,id"]
+            "difficulity_id" => ["required", "exists:difficulities,id"],
+            "questions.*.content" => ["required", "max:255"],
+            "questions.*.answers.*.content" => ["required", "max:100"],
+            "questions.*.answers.*.is_correct" => ["required", "boolean"],
         ]);
 
-        $validated["user_id"] = $request->user()->id;
+        DB::beginTransaction();
+        try {
+            $quiz = Quiz::query()->create([
+                "user_id" => $request->user()->id,
+                "title" => $validated["title"],
+                "description" => $validated["description"],
+                "category_id" => $validated["category_id"],
+                "difficulity_id" => $validated["difficulity_id"]
+            ]);
 
-        $quiz = Quiz::query()->create($validated);
+            foreach ($validated["questions"] as $question) {
+                $createdQuestion = $quiz->questions()->create([
+                    "content" => $question["content"]
+                ]);
 
-        return new QuizResource($quiz);
+                $createdQuestion->answers()->createMany($question['answers']);
+            }
+
+            DB::commit();
+            return new QuizResource($quiz->load("questions.answers"));
+        } catch (Exception $error) {
+            DB::rollBack();
+            return response()->json(['error' => 'Failed to create quiz', 'message' => $error->getMessage()], 500);
+        }
     }
 }
