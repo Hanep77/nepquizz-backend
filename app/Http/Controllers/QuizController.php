@@ -9,6 +9,7 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class QuizController extends Controller
 {
@@ -56,7 +57,7 @@ class QuizController extends Controller
         return new QuizResource($quiz);
     }
 
-    public function store(Request $request)
+    public function store(Request $request): QuizResource | JsonResponse
     {
         $validated = $request->validate([
             "title" => ["required", "max:255"],

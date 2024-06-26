@@ -37,7 +37,7 @@ class GameSessionController extends Controller
             "game_session_id" => ["required", "exists:game_sessions,id"]
         ]);
 
-        $gameSession = GameSession::find($validated["game_session_id"]);
+        $gameSession = GameSession::query()->find($validated["game_session_id"]);
 
         if (!$gameSession) {
             throw new HttpResponseException(response([
@@ -60,7 +60,7 @@ class GameSessionController extends Controller
         return new GameSessionResouce($gameSession);
     }
 
-    public function get_session(Request $request, $id): GameSessionResouce
+    public function get_session(Request $request, string $id): GameSessionResouce
     {
         $gameSession = GameSession::query()->with([
             "quiz" => function ($query) {
@@ -88,7 +88,7 @@ class GameSessionController extends Controller
         return new GameSessionResouce($gameSession);
     }
 
-    public function get_user_answers($id): ResourceCollection
+    public function get_user_answers(string $id): ResourceCollection
     {
         $gameSession = GameSession::query()->with("userAnswers", function ($query) {
             $query->with("answer");

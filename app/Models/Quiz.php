@@ -17,7 +17,7 @@ class Quiz extends Model
     public $incrementing = false;
     public $guarded = ["id"];
 
-    public static function booted()
+    public static function booted(): void
     {
         static::creating(function ($model) {
             $model->id = UuidV7::generate();
