@@ -94,4 +94,18 @@ class QuizController extends Controller
             return response()->json(['error' => 'Failed to create quiz', 'message' => $error->getMessage()], 500);
         }
     }
+
+    public function destroy(string $id): JsonResponse {
+        $quiz = Quiz::query()->find($id);
+
+        if (!$quiz) {
+            throw new HttpResponseException(response([
+                "message" => "NOT FOUND"
+            ], 404));
+        }
+
+        if ($quiz->delete()) {
+            return response()->json(["message" => "deleted successfully"]);
+        }
+    }
 }

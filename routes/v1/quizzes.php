@@ -11,7 +11,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/quizzes/{id}', [QuizController::class, 'show']);
     Route::post('/quizzes', [QuizController::class, 'store']);
     Route::post('/quizzes/{id}', [QuizController::class, 'update']);
-    Route::delete('/quizzes/{id}', [QuizController::class, 'delete']);
+    Route::delete('/quizzes/{id}', [QuizController::class, 'destroy']);
 
     Route::post('/questions', [QuestionController::class, 'store']);
     Route::post('/answers', [AnswerController::class, 'store']);
